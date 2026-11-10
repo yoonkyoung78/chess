@@ -1,0 +1,21 @@
+plugins { id "com.android.application" }
+android {
+    namespace "com.cardchess.app"
+    compileSdk 34
+    defaultConfig {
+        applicationId "com.cardchess.app"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+    // a fixed key in this folder, so a newer APK installs over the old one without deleting it first
+    signingConfigs {
+        release { storeFile file("cardchess.jks"); storePassword "cardchess"; keyAlias "cardchess"; keyPassword "cardchess" }
+    }
+    buildTypes {
+        release { minifyEnabled false; signingConfig signingConfigs.release }
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}
+dependencies { implementation "androidx.webkit:webkit:1.11.0" }
