@@ -585,6 +585,16 @@ body.tvlobby #hand-b,body.tvlobby #hand-w,body.tvlobby .status,body.tvlobby .boa
 .mk.sh{inset:14%;border-radius:50%;border:3px solid #c0392b;background:linear-gradient(#c0392b,#c0392b) center/3px 70% no-repeat,linear-gradient(#c0392b,#c0392b) center/70% 3px no-repeat;opacity:.85}
 .sq.cone{background-image:linear-gradient(rgba(220,50,40,.32),rgba(220,50,40,.32));box-shadow:inset 0 0 0 3px rgba(190,30,20,.85)}
 .manab.ammo{background:#b5642a}.manab.ammo.empty{background:#8a8a8a}
+.sq.sup .pi{opacity:.55;filter:drop-shadow(0 0 4px rgba(120,80,200,.9))}
+.sq.cat1{box-shadow:inset 0 0 0 3px #7a4fc0}
+.fxb{position:absolute;left:3%;top:3%;z-index:5;min-width:30%;height:30%;display:grid;place-items:center;border-radius:999px;font-size:max(10px,2.6cqi);line-height:1;pointer-events:none;color:#fff;background:#555}
+.sq.fxz-fear{background-image:linear-gradient(rgba(110,200,245,.3),rgba(110,200,245,.3));outline:2px solid rgba(70,170,230,.6);outline-offset:-2px}
+.sq.fxz-curse{background-image:linear-gradient(rgba(130,60,160,.28),rgba(130,60,160,.28));outline:2px solid rgba(110,45,140,.6);outline-offset:-2px}
+.sq.fxz-weak{background-image:linear-gradient(rgba(120,110,100,.32),rgba(120,110,100,.32));outline:2px solid rgba(95,85,75,.6);outline-offset:-2px}
+.sq.fxz-haste{background-image:linear-gradient(rgba(240,195,60,.3),rgba(240,195,60,.3));outline:2px solid rgba(215,165,30,.65);outline-offset:-2px}
+.sq.fxz-rage{background-image:linear-gradient(rgba(225,80,55,.26),rgba(225,80,55,.26));outline:2px solid rgba(200,60,40,.6);outline-offset:-2px}
+.fxb.snowb{background:#3f8fd0;box-shadow:0 0 0 1.5px #d8f0ff;color:#fff}
+.fxb.fx-fear{background:#16324a;box-shadow:0 0 0 1.5px #8fdcff,0 0 6px rgba(143,220,255,.8)}.fxb.fx-weak{background:#8a7a6a}.fxb.fx-curse{background:#4a2259}.fxb.fx-haste{background:#d9a52a}.fxb.fx-rage{background:#c4452f}
 </style>
 
 <header class="top">
@@ -743,6 +753,8 @@ const PIECES={
   scientist:{name:"과학자",abbr:"과학",fam:"N",desc:"기본 행마는 나이트입니다. 기물을 잡을 때마다 잡은 기물의 행마를 배워서 계속 함께 씁니다(다른 과학자를 잡으면 그 과학자가 배운 행마를 모두 배웁니다). 행마만 배우고 특성은 배우지 못합니다(예: 아나키스트의 자기 킹 잡기, 드래곤의 자리 바꾸기, 선교사의 전향, 공성추의 파괴). 킹, 퀸, 퀸 계열 변형 기물, 트릭스터는 잡아도 행마를 배우지 못합니다. 상대 기물뿐 아니라 아군 기물도 잡을 수 있지만, 아군 퀸과 킹은 잡을 수 없습니다. 배운 행마의 수는 기물 오른쪽 아래 숫자로 보입니다."},
   capturer:{name:"포획자",abbr:"포획",fam:"R",desc:"상하좌우와 대각선으로 1~3칸 움직이고(가는 길이 막히면 멈춤) 기물을 잡을 수 있습니다. 움직일 때마다 지나간 길에 선을 남기고, 이동을 마친 칸이 예전 선 위라서 닫힌 도형이 생기면 도형 안에 있는 적 기물을 모두 파괴합니다. 선 위에 있는 기물과 킹 역할 기물, 광대, 근위병은 파괴되지 않고, 가호는 한 번 막아 줍니다. 선은 최근 6번 움직인 만큼만 남고, 도형을 완성하면 모두 지워집니다."},
   hourglass:{name:"모래시계",abbr:"모래",fam:"R",desc:"8방향 직선으로 움직이고, 사이에 기물이 있으면 막힙니다. 처음에는 킹처럼 한 칸만 갈 수 있습니다. 움직이지 않고 지나간 자기 차례마다 갈 수 있는 거리가 한 칸씩 늘어나고(최대 7칸), 한 번 움직이면 거리가 3칸 줄어듭니다(최소 1칸). 기물 오른쪽 아래 숫자가 지금 갈 수 있는 거리입니다."},
+  randbox:{name:"랜덤 상자",abbr:"상자",fam:"M",desc:"킹처럼 1칸 움직이지만 기물을 잡을 수 없습니다. 주인이 수를 둘 때마다 주변 8칸의 기물에게 무작위 효과를 하나씩 겁니다. 적에게는 빙결(눈사람의 얼음처럼 상자 주변 칸 밖으로만 움직일 수 있음), 약화(다음 차례에 잡을 수 없음), 공포(다음 차례에 뒤쪽으로만 움직일 수 있음), 저주(한 턴 뒤에도 상자 옆에 남아 있으면 소멸) 중 하나, 아군에게는 가호(공격 한 번을 막음), 신속(다음 차례에 1칸 이동 추가), 분노(다음 차례에 바로 옆 적을 잡을 수 있음) 중 하나입니다. 빙결·약화·공포·신속·분노는 그 기물 쪽이 한 번 수를 두면 사라집니다."},
+  cat:{name:"슈뢰딩거의 고양이",abbr:"고양이",fam:"N",desc:"킹처럼 1칸 움직이고 기물을 잡을 수 있습니다. 빈 칸으로 움직일 때 두 칸을 골라 두 곳에 동시에 있을 수 있습니다(반투명하게 두 마리로 보임). 상대 기물이 둘 중 한 곳의 상하좌우 칸에 오면 관측되어 50% 확률로 한 곳에 확정되고, 공격받으면 그 순간 확정되어 실제로 그 칸에 있었을 때만 잡힙니다. 주인이 다시 움직일 때는 움직일 쪽을 골라 그곳으로 확정한 뒤 움직입니다."},
   shotgun:{name:"샷건 킹",abbr:"샷건",fam:"Q",desc:"킹처럼 1칸 움직이고 기물을 잡을 수 있습니다(킹 역할은 아님). 움직이는 대신 산탄총을 쏠 수 있습니다: 8방향 중 한 방향을 고르면 그쪽으로 퍼지는 4칸(1칸 앞 1곳, 2칸 앞 3곳)의 기물을 아군·적군 가리지 않고 모두 파괴합니다. 탄약은 2발이고, 쏘지 않은 내 차례가 2번 지날 때마다 1발씩 다시 찹니다. 광대와 근위병은 산탄에 맞지 않고, 가호는 한 번 막아 줍니다. 카드로 만든 차례에는 쏠 수 없습니다."},
   quixote:{name:"돈 키호테",abbr:"돈키",fam:"N",desc:"나이트처럼 움직입니다. 주인의 차례가 시작될 때마다 먼저 스스로 한 번 움직이고, 그다음 주인이 수를 둡니다(돈 키호테를 직접 한 번 더 움직여도 됩니다). 스스로 움직일 때는 잡을 수 있는 기물이 있으면 무조건 잡고(가장 값진 기물부터), 없으면 적에게 공격받지 않는 칸으로 피합니다. 상대에게 풍차가 있으면 거인으로 착각해 돌격합니다. 나이트 행마로 계속 뛰어 상대 풍차를 모두 잡을 때까지 멈추지 않고, 가는 길에 내려앉는 칸의 기물은 아군이든 적이든 모두 쓰러뜨립니다(아군 킹과 상대 킹이 있는 칸은 일부러 피해 감)."},
   snowman:{name:"눈사람",abbr:"눈사",fam:"M",desc:"킹처럼 1칸 움직이고 기물을 잡을 수 있습니다. 어떻게 움직였든 눈사람 바로 앞쪽 3칸(정면과 양쪽 앞 대각선)에 있는 적 기물을 얼립니다. 얼어붙은 기물은 얼음 범위 밖으로 나가는 수만 둘 수 있고, 눈사람을 잡을 수 없습니다. 얼지 않은 원거리 기물은 범위를 지나쳐 움직일 수 있습니다."},
@@ -771,6 +783,8 @@ const SHORT={
   scientist:"나이트 행마. 기물을 잡을 때마다 그 기물의 행마를 배웁니다(아군도 잡을 수 있음).",
   capturer:"8방향 1~3칸. 지나간 선으로 닫힌 도형을 만들면 안의 적을 파괴합니다.",
   hourglass:"8방향 직선. 쉬는 동안 갈 수 있는 거리가 늘고, 움직이면 줄어듭니다(숫자 표시).",
+  randbox:"킹처럼 1칸, 잡기 불가. 내 수마다 주변 적에게 빙결·약화·공포·저주, 아군에게 가호·신속·분노 중 하나를 무작위로.",
+  cat:"킹처럼 1칸. 빈 칸 두 곳으로 동시에 움직일 수 있고, 관측되거나 공격받으면 50%로 한 곳에 확정.",
   shotgun:"킹처럼 1칸. 이동 대신 산탄 사격: 고른 방향의 4칸을 아군까지 모두 파괴. 탄약 2발, 2턴마다 1발 충전.",
   quixote:"나이트. 주인 차례 시작에 먼저 자동으로 한 번 움직이고(잡을 게 있으면 잡고, 없으면 안전한 칸으로), 그 뒤 직접 움직일 수도 있습니다. 상대 풍차를 보면 모두 잡을 때까지 돌격하며 길 위의 기물을 다 쓰러뜨립니다.",
   snowman:"킹처럼 1칸. 바로 앞쪽 3칸의 적 기물을 얼려, 얼음 범위 밖으로만 움직일 수 있게 합니다.",
@@ -820,12 +834,14 @@ const CARDS=[
   {id:"hourglass",name:"모래시계",stars:3,from:["R"],fromLabel:"R",piece:"hourglass"},
   {id:"snowman",name:"눈사람",stars:3.5,from:["R"],fromLabel:"R",piece:"snowman"},
   {id:"octopus",name:"문어",stars:3.5,from:["B","N"],fromLabel:"minor",piece:"octopus"},
+  {id:"randbox",name:"랜덤 상자",stars:3,from:["B"],fromLabel:"B",piece:"randbox"},
+  {id:"cat",name:"슈뢰딩거의 고양이",stars:3,from:["N"],fromLabel:"N",piece:"cat"},
   {id:"shotgun",name:"샷건 킹",stars:3.5,from:["Q"],fromLabel:"Q",piece:"shotgun"},
   {id:"quixote",name:"라만차의 기사",stars:3.5,from:["R"],fromLabel:"R",piece:"quixote"}
 ];
 const CARD=Object.fromEntries(CARDS.map(c=>[c.id,c]));
 const ROYAL=new Set(["K","merchant"]);
-const FULL=new Set(["merchant","anarchist","snowman","tengu","trojan","ghost","hourglass","checker","checkerK","scientist","vector","capturer"]); // pictures drawn on the standard 45-unit chess grid fill the square
+const FULL=new Set(["merchant","anarchist","snowman","tengu","trojan","ghost","hourglass","checker","checkerK","scientist","vector","capturer","randbox","cat"]); // pictures drawn on the standard 45-unit chess grid fill the square
 const isRoyal=q=>!!q&&q.s!=="x"&&(ROYAL.has(q.t)||!!q.royal); // an anarchist that took its own king plays the king
 const TRICK_FORMS=["Q","R","B","N","P","amazon","guhaeng","tengu","pm","jester","berserker","dragon","herald","princess","cardinal","monsignor","missionary","alibaba","commander","assassin","grasshopper","cannon","windmill","fanatic","berolina","bearer","ghost"];
 // noPawn: on the far rank a pawn-family form could never move, so it is not drawn there
@@ -897,7 +913,7 @@ function step(L,i,offs,noCap){
 }
 function near(i,pred,dirs){ for(const[dr,dc] of (dirs||DIRS8)){const r=R(i)+dr,c=C(i)+dc; if(inb(r,c)){const n=S.B[idx(r,c)]; if(n&&pred(n)) return true;}} return false; }
 
-function gen(i){
+function gen0(i){
   const p=S.B[i]; if(!p) return [];
   const L=[], r=R(i), c=C(i), d=p.s==="w"?-1:1, F=FWD[p.s]||[d,0], LAT=[[F[1],F[0]],[-F[1],-F[0]]];
   switch(p.t){
@@ -919,6 +935,8 @@ function gen(i){
         if(q&&q.s===p.s&&q.t==="K") L.push({from:i,to:j,type:"regicide",cap:true}); }
       break; }
     case "snowman": case "octopus": step(L,i,DIRS8); break;
+    case "randbox": for(const [dr,dc] of DIRS8){ if(inb(r+dr,c+dc)&&!S.B[idx(r+dr,c+dc)]) L.push({from:i,to:idx(r+dr,c+dc)}); } break; // never takes
+    case "cat": step(L,i,DIRS8); break;
     case "shotgun": { step(L,i,DIRS8); // moves like a king; instead of moving it may fire
       if(p.fresh!==S.ply&&(p.ammo==null?2:p.ammo)>0) for(const [dr,dc] of DIRS8){ if(!inb(r+2*dr,c+2*dc)) continue;
         const cone=shotCone(i,dr,dc); if(!cone.some(j=>S.B[j])) continue;
@@ -1127,6 +1145,7 @@ function posKey(){
 // the scientist cannot copy the king, the queen, anything built on the queen, or the trickster
 function sciCanLearn(t){ return !!PIECES[t]&&t!=="K"&&t!=="Q"&&t!=="N"&&t!=="trickster"&&t!=="scientist"&&PIECES[t].fam!=="Q"; }
 function applyMove(m){
+  m=catPrep(m); // Schrödinger's cat settles where it is before anything happens
   const p=S.B[m.from], side=p.s, other=opp(side), act=eff(p); // a trickster moves and behaves as its current form
   const sciPrey=(p.t==="scientist"&&m.type!=="swap"&&m.type!=="convert"&&m.type!=="buy")?[m.to].concat(m.destroy||[],m.epCap!=null?[m.epCap]:[]).map(j=>S.B[j]).filter(q=>q&&q!==p):[];
   S.lostNow={}; inker=p; inkNote=[];
@@ -1182,6 +1201,7 @@ function applyMove(m){
     else { p.t="Q"; text+=" =퀸"; } }
   if(p.t==="vector"&&S.B[pos]===p&&pos!==m.from) text=vecLearn(p,m,text);
   if(p.t==="capturer"&&S.B[pos]===p&&pos!==m.from) text=capTrail(p,m.from,pos,text);
+  if(m.twin!=null&&p.t==="cat"&&S.B[pos]===p&&!S.B[m.twin]){ p.sup=Math.random().toString(36).slice(2,8); S.B[m.twin]=Object.assign({},p); text+=" · 두 곳에 동시에: "+sqName(pos)+" / "+sqName(m.twin); }
   if(sciPrey.length&&S.B[pos]===p){ // the scientist learns the moves of whatever it destroyed
     const got=[]; p.learn=p.learn||[];
     sciPrey.forEach(q=>{ if(S.B.includes(q)||q.t==="trickster") return; const ts=q.t==="scientist"?(q.learn||[]):[q.t];
@@ -1229,6 +1249,8 @@ function applyMove(m){
       j=empties[Math.floor(Math.random()*empties.length)]; }
     S.B[j]={t:"undead",s:side,moved:true};
     S.log.push({side,text:SIDE[side]+" 언데드가 "+sqName(j)+"에서 부활"}); return false; });
+  boxEffects(side); if(S.over) return;
+  catObserve();
   S.lost[side]=false; for(const x in S.lostNow) if(x!==side&&S.lostNow[x]) S.lost[x]=true;
   if(S.extra===side&&(!S.four||S.alive.includes(side))){ S.extra=null; S.log.push({side,text:SIDE[side]+" 시간 정지: "+(S.four?"다른 플레이어":SIDE[other])+" 차례를 건너뜀"}); }
   else S.turn=nextTurn(side);
@@ -1370,6 +1392,103 @@ async function playQAnim(a){
 }
 document.addEventListener("click",e=>{ if(e.target.closest(".qreplay")&&S&&S.qanim){ qAnim.id=null; syncQAnim(); } });
 window.addEventListener("resize",()=>qPlace());
+/* ---------- random box and Schrödinger's cat ---------- */
+// two new pieces drawn on the 45-unit grid used by the standard pieces
+// random box: a bevelled mystery block; cat: a cat peeking out of an open cardboard box
+function boxSVG(side){ const d=side==="b", f=d?"#000":"#fff", ln=d?"#fff":"#000", sh=d?"#3a3a3a":"#e6e6e6";
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g stroke="#000" stroke-width="1.5" stroke-linejoin="round">'+
+    '<rect x="8" y="8" width="29" height="29" rx="2.5" fill="'+f+'"/>'+
+    '<path d="M11.5 11.5h22v22h-22z" fill="'+sh+'" stroke="'+ln+'" stroke-width="1"/>'+
+    '<path d="M8.6 8.6l2.9 2.9M36.4 8.6l-2.9 2.9M8.6 36.4l2.9-2.9M36.4 36.4l-2.9-2.9" stroke="'+ln+'" stroke-width="1"/></g>'+
+    '<path d="M18.3 19.3c0-3 1.9-4.8 4.4-4.8s4.3 1.6 4.3 4c0 3.6-4.2 3.6-4.2 7.1" fill="none" stroke="'+ln+'" stroke-width="3" stroke-linecap="round"/>'+
+    '<circle cx="22.8" cy="30.4" r="1.8" fill="'+ln+'"/>'+
+    '<path d="M7.5 39.5h30" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg>'; }
+function catSVG(side){ const d=side==="b", f=d?"#000":"#fff", ln=d?"#fff":"#000", box=d?"#2b2b2b":"#fff", det=d?"#ddd":"#000";
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g stroke="#000" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">'+
+    '<path d="M11 26.5l-5-6.5 10.5 1.5M34 26.5l5-6.5-10.5 1.5" fill="'+box+'"/>'+
+    '<path d="M12.3 26.5c-.3-1.6-.3-3.2.1-4.6l-.9-10.4 6.6 5.6c1.4-.6 2.9-.9 4.4-.9s3 .3 4.4.9l6.6-5.6-.9 10.4c.4 1.4.4 3 .1 4.6z" fill="'+f+'"/>'+
+    '<path d="M10 26.5h25v11.5h-25z" fill="'+box+'"/>'+
+    '<path d="M10 26.5l-4.5 4.8h11l2-4.8M35 26.5l4.5 4.8h-11l-2-4.8" fill="'+box+'"/>'+
+    '<path d="M15.2 26.6c0-1.8 1.3-2.8 2.7-2.8s2.7 1 2.7 2.8M24.4 26.6c0-1.8 1.3-2.8 2.7-2.8s2.7 1 2.7 2.8" fill="'+f+'"/>'+
+    '<path d="M7.5 40h30" stroke-width="2"/></g>'+
+    '<g fill="'+det+'"><ellipse cx="19" cy="19.6" rx="1.2" ry="1.8"/><ellipse cx="26" cy="19.6" rx="1.2" ry="1.8"/><path d="M21.6 22h1.8l-.9 1.1z"/></g>'+
+    '<g stroke="'+det+'" stroke-width=".6" stroke-linecap="round"><path d="M16.8 22.2l-3.8-.5M16.8 23.2l-3.6.7M28.2 22.2l3.8-.5M28.2 23.2l3.6.7"/></g>'+
+    '<path d="M22.5 31.3v6.7" stroke="'+(d?"#888":"#000")+'" stroke-width="1"/>'+
+    '<path d="M14 37v-3.6m-1.3 1.3l1.3-1.3 1.3 1.3M17.2 37v-3.6m-1.3 1.3l1.3-1.3 1.3 1.3" fill="none" stroke="'+(d?"#bbb":"#000")+'" stroke-width=".7" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+IMG.randbox={w:"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(boxSVG("w")),b:"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(boxSVG("b"))};
+IMG.cat={w:"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(catSVG("w")),b:"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(catSVG("b"))};
+["r","u","y","g","x"].forEach(x=>{ IMG.randbox[x]=IMG.randbox.w; IMG.cat[x]=IMG.cat.w; });
+// effects the random box hands out; each lasts until its holder's side has made one more move
+const FX={ice:{n:"빙결",i:"❄",d:"눈사람의 얼음처럼, 다음 차례에 랜덤 상자 주변 칸 밖으로만 움직일 수 있음"},weak:{n:"약화",i:"⤓",d:"다음 차례에 기물을 잡을 수 없음"},
+  fear:{n:"공포",i:"<svg viewBox=\"0 0 24 24\" width=\"78%\" height=\"78%\" aria-hidden=\"true\"><path d=\"M12 2.5c-5 0-8.5 3.4-8.5 7.9 0 2.6 1.2 4.6 3 5.8V19c0 1 .8 1.8 1.8 1.8h7.4c1 0 1.8-.8 1.8-1.8v-2.8c1.8-1.2 3-3.2 3-5.8 0-4.5-3.5-7.9-8.5-7.9z\" fill=\"#8fdcff\"/><circle cx=\"8.6\" cy=\"11\" r=\"2.3\" fill=\"#123049\"/><circle cx=\"15.4\" cy=\"11\" r=\"2.3\" fill=\"#123049\"/><ellipse cx=\"12\" cy=\"16.9\" rx=\"2.4\" ry=\"2.9\" fill=\"#123049\"/></svg>",d:"다음 차례에 뒤쪽(자기 진영 쪽)으로만 움직일 수 있음"},
+  haste:{n:"신속",i:"⚡",d:"다음 차례에 킹 행마(1칸 이동)를 더 쓸 수 있음"},rage:{n:"분노",i:"🔥",d:"다음 차례에 바로 옆 1칸의 적도 잡을 수 있음"}};
+// moves after effects: frozen pieces stay put, weakened ones cannot take, hasted/raging ones get extra king steps
+function gen(i){
+  const p=S.B[i]; if(!p) return [];
+  let L=gen0(i);
+  if(!p.fx) return L;
+  if(p.fx.k==="ice"){ const z=p.fx.zone||[]; return L.filter(m=>m.type==="buy"||!z.includes(m.to)); } // like a snowman's ice: only out of the box's reach
+  if(p.fx.k==="fear") return L.filter(m=>m.type==="buy"||rankOf(m.to,p.s)<rankOf(i,p.s)); // only backwards
+  if(p.fx.k==="weak") return L.filter(m=>!m.cap&&!(m.destroy&&m.destroy.length));
+  const r=R(i), c=C(i);
+  for(const [dr,dc] of DIRS8){ if(!inb(r+dr,c+dc)) continue; const j=idx(r+dr,c+dc), q=S.B[j];
+    if(L.some(m=>m.to===j&&!m.type)) continue;
+    if(p.fx.k==="haste"&&!q) L.push({from:i,to:j});
+    if(p.fx.k==="rage"&&q&&q.s!==p.s&&q.s!=="x"&&capOK(i,j)) L.push({from:i,to:j,cap:true}); }
+  return L;
+}
+function boxEffects(side){
+  S.B.forEach(q=>{ if(q&&q.fx&&q.s===side&&q.fx.at<S.ply) delete q.fx; }); // this side has now used its turn
+  const boxes=[]; S.B.forEach((q,j)=>{ if(q&&q.t==="randbox"&&q.s===side) boxes.push(j); });
+  const nearBox=j=>boxes.some(b=>b!==j&&Math.max(Math.abs(R(b)-R(j)),Math.abs(C(b)-C(j)))===1);
+  // a curse comes due: still next to the box a turn later -> gone
+  S.B.forEach((q,j)=>{ if(!q||!q.curse||q.curse.s!==side) return;
+    if(!nearBox(j)){ delete q.curse; return; }
+    const nm=SIDE[q.s]+" "+pname(q)+"("+sqName(j)+")"; delete q.curse;
+    S.log.push({side,text:"랜덤 상자의 저주 → "+nm+(destroyAt(j,"저주")?" 소멸":" 버텨냄")}); });
+  if(S.over||!boxes.length) return;
+  const got=[];
+  boxes.forEach(b=>{ for(const [dr,dc] of DIRS8){ const r=R(b)+dr, c=C(b)+dc; if(!inb(r,c)) continue; const j=idx(r,c), q=S.B[j];
+    if(!q||q.t==="randbox"||q.s==="x") continue;
+    const pick=a=>a[Math.floor(Math.random()*a.length)];
+    if(q.s===side){ const k=pick(["shield","haste","rage"]);
+      if(k==="shield") q.shield=true; else q.fx={k,at:S.ply};
+      got.push(pname(q)+" "+(k==="shield"?"가호":FX[k].n)); }
+    else { const k=pick(["ice","curse","weak","fear"]);
+      if(k==="curse") q.curse={s:side,at:S.ply};
+      else if(k==="ice"){ const z=[b]; for(const [er,ec] of DIRS8) if(inb(R(b)+er,C(b)+ec)) z.push(idx(R(b)+er,C(b)+ec)); q.fx={k,at:S.ply,zone:z}; }
+      else q.fx={k,at:S.ply};
+      got.push(SIDE[q.s]+" "+pname(q)+" "+(k==="curse"?"저주":FX[k].n)); } } });
+  if(got.length) S.log.push({side,text:SIDE[side]+" 랜덤 상자 → "+got.join(", ")});
+}
+/* --- the cat: one move may leave it in two places at once --- */
+function catSquares(id){ const a=[]; S.B.forEach((q,j)=>{ if(q&&q.t==="cat"&&q.sup===id) a.push(j); }); return a; }
+function catCollapse(id,keep){
+  const sq=catSquares(id); if(!sq.length) return -1;
+  const k=(keep!=null&&keep>=0&&sq.includes(keep))?keep:sq[Math.floor(Math.random()*sq.length)];
+  sq.forEach(j=>{ if(j===k) delete S.B[j].sup; else S.B[j]=null; });
+  return k;
+}
+function catObserve(){
+  const ids=new Set(); S.B.forEach(q=>{ if(q&&q.t==="cat"&&q.sup) ids.add(q.sup); });
+  ids.forEach(id=>{ const sq=catSquares(id); if(!sq.length) return; const s=S.B[sq[0]].s;
+    const seen=sq.some(j=>ORTH.some(([dr,dc])=>{ const r=R(j)+dr, c=C(j)+dc; if(!inb(r,c)) return false; const q=S.B[idx(r,c)]; return q&&q.s!==s&&q.s!=="x"&&!(q.t==="cat"&&q.sup===id); }));
+    if(!seen) return;
+    const k=catCollapse(id,-1);
+    S.log.push({side:s,text:"관측! "+SIDE[s]+" 슈뢰딩거의 고양이는 "+sqName(k)+"에 있었다"}); });
+}
+// before a move: the owner picks the half it moves; an attacker forces the cat to show where it is
+function catPrep(m){
+  const mv=S.B[m.from]; let note=null; m=Object.assign({},m);
+  if(mv&&mv.t==="cat"&&mv.sup) catCollapse(mv.sup,m.from);
+  const tg=S.B[m.to];
+  if(tg&&tg.t==="cat"&&tg.sup&&mv&&tg.s!==mv.s){ const k=catCollapse(tg.sup,-1);
+    note="관측! "+SIDE[tg.s]+" 슈뢰딩거의 고양이는 "+sqName(k)+"에 있었다"+(k===m.to?"":" (빈 칸을 공격함)");
+    if(!S.B[m.to]){ m.cap=false; delete m.type; } }
+  if(m.type==="cat2"){ m.twin=m.to2; delete m.type; }
+  if(note) S.log.push({side:tg.s,text:note});
+  return m;
+}
 /* ---------- octopus ---------- */
 // An octopus with no enemy piece on the 8 squares around it lurks: its owner sees it, the opponent does not.
 // Taking an octopus works, but the taker has until the end of its owner's next turn to leave the 3x3 around the octopus.
@@ -1530,6 +1649,8 @@ function pieceHTML(p){
   if(p.fresh===S.ply&&!S.over) h+='<span class="fresh" title="이번 턴엔 잡기 불가"></span>';
   if(p.t==="trickster"&&vt!=="trickster") h+='<img class="maskb" src="'+IMG.trickster[p.s]+'" alt="트릭스터" title="트릭스터">';
   if(p.shield) h+='<span class="shieldb" title="가호">✦</span>';
+  if(p.fx&&FX[p.fx.k]&&p.fx.k!=="ice") h+='<span class="fxb fx-'+p.fx.k+'" title="'+FX[p.fx.k].n+'">'+FX[p.fx.k].i+'</span>';
+  if(p.curse) h+='<span class="fxb fx-curse" title="저주"><svg viewBox="0 0 24 24" width="84%" height="84%" aria-hidden="true"><path d="M12 3.2a4 4 0 0 0-4 4 4 4 0 0 0 1.6 3.2H6.2a1.6 1.6 0 0 0 0 3.2h3.3l-2.3 5.6a1.5 1.5 0 0 0 2.7 1.2L12 16.6l2.1 3.8a1.5 1.5 0 0 0 2.7-1.2l-2.3-5.6h3.3a1.6 1.6 0 0 0 0-3.2h-3.4a4 4 0 0 0 1.6-3.2 4 4 0 0 0-4-4z" fill="#d9b77e" stroke="#3a2410" stroke-width=".8"/><path d="M9.6 6.2l1.4 1.4M11 6.2L9.6 7.6M13 6.2l1.4 1.4M14.4 6.2L13 7.6M10.4 9.1h3.2M11 8.7v.8M12 8.7v.8M13 8.7v.8M12 11.2v4.4" stroke="#3a2410" stroke-width=".7" stroke-linecap="round"/><path d="M18.8 2.6L13.3 12" stroke="#cfcfcf" stroke-width=".9" stroke-linecap="round"/><circle cx="19" cy="2.6" r="1.5" fill="#d6334a"/></svg></span>';
   if(p.t==="merchant") h+='<span class="manab gold" title="골드 '+S.gold[p.s]+'">'+S.gold[p.s]+'</span>';
   if(p.t==="scientist"&&p.learn&&p.learn.length) h+='<span class="manab sci" title="배운 행마: '+p.learn.map(t=>PIECES[t].name).join(", ")+'">'+p.learn.length+'</span>';
   if(p.t==="vector"&&p.vecs&&p.vecs.length) h+='<span class="manab vec" title="익힌 벡터 '+p.vecs.length+'개">'+p.vecs.length+'</span>';
@@ -1555,8 +1676,10 @@ function render(){
     let cls="sq "+((r+c)%2?"d":"l");
     const pv=octoVeil(i)?null:p, lv=inkLevel(i); // pv: what this viewer may see on the square (a lurking enemy octopus is hidden)
     if(lv) cls+=" inkz"+(lv===2?" inkc":"");
-    if(inIce(i)) cls+=" icez";
+    if(inIce(i)||(p&&p.fx&&p.fx.k==="ice")) cls+=" icez"; // frozen by a snowman or by a random box
+    if(p&&p.fx&&p.fx.k!=="ice"&&FX[p.fx.k]) cls+=" fxz-"+p.fx.k; if(p&&p.curse) cls+=" fxz-curse"; // other random-box effects tint their square too
     if(S.last&&(S.last.from===i||S.last.to===i)) cls+=" last";
+    if(p&&p.sup) cls+=" sup"; if(ui.cat1===i) cls+=" cat1";
     if(qAnim.hide===i) cls+=" qhide";
     if(ui.sel>=0&&qAim.includes(i)) cls+=" cone";
     if(ui.sel===i) cls+=" sel";
@@ -1565,7 +1688,7 @@ function render(){
     if(N===8&&v>=56) inner+='<span class="co f">'+"abcdefgh"[c]+'</span>';
     if(trail[i]) inner+=trailSVG(trail[i]);
     { const tj=tjMap.get(i); if(tj&&!p) inner+='<span class="tjm" title="트로이 목마가 지금 잡히면 '+esc(PIECES[tj.t].name)+'이(가) 나타나는 자리"></span>'; }
-    if(pv){ inner+=pieceHTML(pv); if(pv.t==="octopus"&&octoHidden(i)){ cls+=" lurking"; inner+='<span class="lurkb" title="잠복 중 · 상대에게는 보이지 않아요">잠복</span>'; } }
+    if(pv){ inner+=pieceHTML(pv); if(pv.s!=="x"&&(isFrozen(i)||(pv.fx&&pv.fx.k==="ice"))) inner+='<span class="fxb snowb" title="빙결">❄</span>'; if(pv.t==="octopus"&&octoHidden(i)){ cls+=" lurking"; inner+='<span class="lurkb" title="잠복 중 · 상대에게는 보이지 않아요">잠복</span>'; } }
     if(pv&&isFrozen(i)) inner+='<span class="ice" title="얼어붙음"></span>';
     for(const st of S.strikes) if(st.sq.includes(i)) inner+='<span class="mk st '+st.kind+'" title="'+(st.kind==="meteor"?"메테오":"번개")+' 예고"></span>';
     if((ui.mode==="spell"||ui.mode==="cargo"||ui.mode==="edcargo")&&ui.picks.includes(i)) inner+='<span class="mk pk"></span>';
@@ -1660,6 +1783,9 @@ function renderInfo(){
     if(p.t==="scientist") extra=" 배운 행마: "+((p.learn||[]).length?p.learn.map(t=>PIECES[t].name).join(", "):"아직 없음 (나이트 행마만)")+".";
     if(p.t==="trickster") extra=canSeeForm(p)?" 지금 정체: "+PIECES[p.form||"R"].name+" ("+sdesc(p.form||"R")+")":" 정체는 주인만 볼 수 있습니다.";
     if(p.shield) extra+=" 가호: 다음 공격 한 번을 막습니다.";
+    if(p.fx&&FX[p.fx.k]) extra+=" "+FX[p.fx.k].n+": "+FX[p.fx.k].d+".";
+    if(p.curse) extra+=" 저주: 상대 랜덤 상자 옆에 한 턴 더 있으면 소멸합니다.";
+    if(p.sup) extra+=" 지금 두 곳에 동시에 있어요(관측되거나 공격받으면 한 곳으로 확정).";
     if(p.uid&&(S.inks||[]).some(e=>e.u===p.uid&&e.s===p.s)) extra+=" 문어의 먹물: 자기 다음 차례가 끝나기 전에 붉은 범위 밖으로 나가야 해요.";
     el.innerHTML='<p class="info-name">'+mini+info.name+'</p><p class="info-meta">'+SIDE[p.s]+" · "+sqName(I.i)+(p.fresh===S.ply?" · 이번 턴엔 잡기 불가":"")+'</p><p class="info-desc">'+sdesc(p.t)+extra+moreHint(p.t)+'</p>';
   } else if(I.kind==="card"){ const card=CARD[I.id], pc=PIECES[card.piece];
@@ -1697,6 +1823,17 @@ $("board").addEventListener("click",e=>{
     }
     if(ui.mode==="sac"){ applyCard(card,ui.target,i); const t=ui.target; cancelMode(); ui.info={kind:"piece",i:t}; commit(); render(); return; }
   }
+  if(ui.sel>=0&&S.B[ui.sel]&&S.B[ui.sel].t==="cat"){
+    const from=ui.sel;
+    if(ui.cat1!=null){ const c1=ui.cat1; ui.cat1=null;
+      const base=gen(from).find(x=>x.to===c1&&!x.cap&&!x.type);
+      if(base&&(i===c1||ui.moves.some(x=>x.to===i))){
+        applyMove(i===c1?base:{from,to:c1,type:"cat2",to2:i}); ui.sel=-1; ui.moves=[]; ui.info={kind:"piece",i:c1}; commit(); render(); return; }
+      ui.sel=-1; ui.moves=[]; render(); return; }
+    if(ui.moves.some(x=>x.to===i&&!x.cap&&!x.type)){ // first square picked: now the second one, or the same one again
+      ui.cat1=i; ui.moves=ui.moves.filter(x=>x.to!==i&&!x.cap&&!x.type&&!S.B[x.to]);
+      toast("두 번째 칸을 누르면 고양이가 두 곳에 동시에 있게 돼요. 같은 칸을 다시 누르면 그곳으로만 움직여요."); render(); return; }
+  }
   if(ui.sel>=0){
     const m=ui.moves.find(x=>x.to===i&&(x.type==="swap"? true : true));
     const cand=ui.moves.filter(x=>x.to===i);
@@ -1706,6 +1843,7 @@ $("board").addEventListener("click",e=>{
       applyMove(mv); ui.sel=-1; ui.moves=[]; ui.info=S.B[mv.type==="convert"?mv.to:mv.to]?{kind:"piece",i:mv.to}:{kind:"rules"}; commit(); render(); return;
     }
   }
+  ui.cat1=null;
   if(p){ ui.info={kind:"piece",i};
     if(p.s===S.turn){ ui.sel=i; ui.moves=gen(i); } else { ui.sel=-1; ui.moves=[]; } }
   else { ui.sel=-1; ui.moves=[]; }
@@ -1763,7 +1901,7 @@ const AI_SIDE="b";
 let gameMode="home", aiBusy=false;
 const isAI=side=>gameMode==="ai"&&side===AI_SIDE;
 const VAL={K:0,Q:9,R:5,B:3.3,N:3,P:1,amazon:13,guhaeng:12,tengu:10,trojan:3,pm:7.5,jester:4,undead:7,conscript:4.5,berserker:5,ram:5,dragon:4,herald:4,princess:5,magicgirl:6,
-  cardinal:6,monsignor:3.5,missionary:3,alibaba:2.5,commander:3.2,assassin:4.5,grasshopper:4,cannon:4,campfire:4,windmill:4,fanatic:1.3,berolina:1,bearer:1.5,guard:2,wizard:5,merchant:0,trickster:5,anarchist:4.5,snowman:4,ghost:4,scientist:3.2,capturer:6.5,quixote:4.5,shotgun:7,checker:1.6,checkerK:3.5,hourglass:4,octopus:3.5};
+  cardinal:6,monsignor:3.5,missionary:3,alibaba:2.5,commander:3.2,assassin:4.5,grasshopper:4,cannon:4,campfire:4,windmill:4,fanatic:1.3,berolina:1,bearer:1.5,guard:2,wizard:5,merchant:0,trickster:5,anarchist:4.5,snowman:4,ghost:4,scientist:3.2,capturer:6.5,quixote:4.5,shotgun:7,randbox:3.5,cat:3.5,checker:1.6,checkerK:3.5,hourglass:4,octopus:3.5};
 const snapStr=()=>{ const log=S.log; S.log=[]; const s=JSON.stringify(S); S.log=log; return s; };
 function evalFor(side){
   if(S.over) return S.over.winner==null?0:(S.over.winner===side?1e5:-1e5);
